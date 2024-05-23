@@ -19,40 +19,47 @@ def main(
     reader = pypdf.PdfReader(path)
 
     """ get first page words that will contain the title words """
-    first_page_words = reader.pages[0].extract_text()
+    candidates = []
+    for page in range(2):
+        page_words = reader.pages[page].extract_text()
 
-    """ get words from first two lines """
-    lines, line_idx = ["", ""], 0
-    for char in first_page_words:
-        lines[line_idx] += char
-        if char == '\n':
-            line_idx += 1
-            if line_idx == 2:
+        """ get words from first two lines """
+        lines, line_idx = ["", ""], 0
+        for char in page_words:
+            lines[line_idx] += char
+            if char == '\n':
+                line_idx += 1
+                if line_idx == 2:
+                    break
+
+        """ preprocess words """
+        words = [[], []]
+        for idx, line in enumerate(lines):
+            for current in line.split():
+                for word in current.split('-'):
+                    words[idx].append(re.sub('[^A-Za-z0-9]+', '', word.lower()))
+
+        """ check if the second line contain author name """
+        authors = True
+        for word in words[1][:2]:
+            if word in nltk.corpus.words.words():
+                # print(word, "in corpus")
+                authors = False
                 break
 
-    """ preprocess words """
-    words = [[], []]
-    for idx, line in enumerate(lines):
-        for current in line.split():
-            for word in current.split('-'):
-                words[idx].append(re.sub('[^A-Za-z0-9]+', '', word.lower()))
-    # print(words)
+        """ join title words for new file name """
+        title = words[0] if authors else words[0] + words[1]
+        file_name = '-'.join(title)
+        candidates.append(file_name)
 
-    """ check if the second line contain author name """
-    authors = True
-    for word in words[1][:2]:
-        if word in nltk.corpus.words.words():
-            print(word, "in corpus")
-            authors = False
-            break
-
-    """ join title words for new file name """
-    title = words[0] if authors else words[0] + words[1]
-    file_name = '-'.join(title)
+    """ print candidates and prompt for candidate choice """
+    print("Title Candidates:")
+    print("\n".join("  [{i}] {s}.pdf".format(i=i, s=s) for i, s in enumerate(candidates)))
+    choice = int(input("Your choice of title: "))
 
     """ move current file into new file name """
-    command = ["mv", path, file_name + ".pdf"]
-    print(path, "->", file_name+".pdf")
+    command = ["mv", path, candidates[choice] + ".pdf"]
+    print(path, "->", candidates[choice]+".pdf")
     sp.run(command)
 
 
