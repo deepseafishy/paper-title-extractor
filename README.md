@@ -1,8 +1,8 @@
 # Paper Title Extractor
 
 Short Python code that extracts the title from the PDF of a scientific paper and renames to it.
-This code relies on the idea that usually the title does not exceed two lines and the first author's name does not exist in the word dictionary corpus.
-Therefore, this code retrieves first two sentences from the PDF and checks if the first word in the second sentence is a name or not.
+This code relies on the idea that the title usually is at most three lines on either first or the second page.
+Only useful for file naming convention freaks like me or if there is no related meta-data within the PDF file.
 
 ## Prerequisite
 
@@ -26,7 +26,6 @@ python3 main.py -p /path/to/pdf
 
 ## TODO
 
-- [ ] Create and print candidates of the title to choose from
-  - [ ] Try to show all two lines
-  - [ ] Try to show just one line
-  - [ ] Try to show the title from metadata if it exists
+- [ ] Take in multiple paths
+- [ ] Try to show the title from metadata if it exists
+- [x] Create and print candidates of the title to choose from
