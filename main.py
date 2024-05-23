@@ -2,7 +2,6 @@ import argparse
 import pypdf
 import re
 import subprocess as sp
-import nltk
 
 
 def main(
@@ -12,9 +11,6 @@ def main(
     Read title in the PDF and change the file name to it.
     :params path: a string containing file path
     """
-    """ download nltk corpus """
-    nltk.download("words")
-
     """ read in PDF file """
     reader = pypdf.PdfReader(path)
 
