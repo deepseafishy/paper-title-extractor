@@ -20,37 +20,32 @@ def main(
 
     """ get first page words that will contain the title words """
     candidates = []
-    for page in range(2):
-        page_words = reader.pages[page].extract_text()
+    for n_lines in [1, 2, 3]:
+        for page in range(2):
+            page_words = reader.pages[page].extract_text()
 
-        """ get words from first two lines """
-        lines, line_idx = ["", ""], 0
-        for char in page_words:
-            lines[line_idx] += char
-            if char == '\n':
-                line_idx += 1
-                if line_idx == 2:
-                    break
+            """ get words from first two lines """
+            lines, line_idx = ["" for _ in range(n_lines)], 0
+            for char in page_words:
+                lines[line_idx] += char
+                if char == '\n':
+                    line_idx += 1
+                    if line_idx == n_lines:
+                        break
 
-        """ preprocess words """
-        words = [[], []]
-        for idx, line in enumerate(lines):
-            for current in line.split():
-                for word in current.split('-'):
-                    words[idx].append(re.sub('[^A-Za-z0-9]+', '', word.lower()))
+            """ preprocess words """
+            words = [[] for _ in range(n_lines)]
+            for idx, line in enumerate(lines):
+                for current in line.split():
+                    for word in current.split('-'):
+                        words[idx].append(re.sub('[^A-Za-z0-9]+', '', word.lower()))
 
-        """ check if the second line contain author name """
-        authors = True
-        for word in words[1][:2]:
-            if word in nltk.corpus.words.words():
-                # print(word, "in corpus")
-                authors = False
-                break
+            """ flatten words into a single list """
+            title = [item for row in words for item in row]
 
-        """ join title words for new file name """
-        title = words[0] if authors else words[0] + words[1]
-        file_name = '-'.join(title)
-        candidates.append(file_name)
+            """ join the words to create a title candidate and append it to candidates """
+            file_name = '-'.join(title)
+            candidates.append(file_name)
 
     """ print candidates and prompt for candidate choice """
     print("Title Candidates:")
