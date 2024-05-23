@@ -6,9 +6,9 @@ Only useful for file naming convention freaks like me or if there is no related 
 
 ## Prerequisite
 
-This code requires `argparse`, `pypdf`, `re`, and `nltk`.
+This code requires `argparse`, `pypdf`, and `re`.
 ```bash
-pip install argparse pypdf re nltk
+pip install argparse pypdf re
 ```
 
 ## Usage
